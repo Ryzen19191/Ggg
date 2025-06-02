@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Wingo Prediction</title>
+<style>
+  body { font-family: Arial, sans-serif; max-width: 600px; margin: 40px auto; padding: 20px; }
+  h1 { text-align: center; color: #d33; }
+  #timer { font-size: 2em; text-align: center; margin: 20px 0; }
+  #prediction { font-size: 1.5em; text-align: center; color: green; }
+  #results { margin: 20px 0; }
+  button { display: block; margin: 30px auto; padding: 10px 20px; font-size: 1.2em; cursor: pointer; }
+</style>
+</head>
+<body>
+
+<h1>Wingo Prediction</h1>
+<div id="timer">Timer: --</div>
+<div id="results">Last Results: --</div>
+<div id="prediction">Prediction: --</div>
+<button id="refreshBtn">Refresh Data</button>
+
+<script>
+  const timerElem = document.getElementById('timer');
+  const resultsElem = document.getElementById('results');
+  const predictionElem = document.getElementById('prediction');
+  const refreshBtn = document.getElementById('refreshBtn');
+
+  async function fetchData() {
+    try {
+      const res = await fetch('/api/results');
+      const data = await res.json();
+
+      timerElem.textContent = 'Timer: ' + data.timer;
+      resultsElem.textContent = 'Last Results: ' + data.lastResults.join(', ');
+      predictionElem.textContent = 'Prediction: ' + data.prediction;
+    } catch (err) {
+      timerElem.textContent = 'Timer: --';
+      resultsElem.textContent = 'Last Results: --';
+      predictionElem.textContent = 'Prediction: Error fetching data';
+      console.error(err);
+    }
+  }
+
+  refreshBtn.onclick = fetchData;
+
+  // Auto-refresh every 30 seconds
+  fetchData();
+  setInterval(fetchData, 30000);
+</script>
+
+</body>
+</html>
